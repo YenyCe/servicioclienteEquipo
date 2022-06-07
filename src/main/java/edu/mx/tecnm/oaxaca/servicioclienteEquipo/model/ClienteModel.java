@@ -18,11 +18,12 @@ public class ClienteModel {
     @Id
     @Column //Todos los atributos son columnas
     private String rfc;
+    private int id;
     private String nombre;
     private String apellidos;
     private String direccion;
     private String correo_electronico;
-    private int no_telefono;
+    private String no_telefono;
     private int PIN;
     private String estatus;
 
@@ -30,9 +31,26 @@ public class ClienteModel {
         return rfc;
     }
 
+    public String getNo_telefono() {
+        return no_telefono;
+    }
+
+    public void setNo_telefono(String no_telefono) {
+        this.no_telefono = no_telefono;
+    }
+
     public void setRfc(String rfc) {
         this.rfc = rfc;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
 
     public String getNombre() {
         return nombre;
@@ -64,14 +82,6 @@ public class ClienteModel {
 
     public void setCorreo_electronico(String correo_electronico) {
         this.correo_electronico = correo_electronico;
-    }
-
-    public int getNo_telefono() {
-        return no_telefono;
-    }
-
-    public void setNo_telefono(int no_telefono) {
-        this.no_telefono = no_telefono;
     }
 
     public int getPIN() {

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/cliente")
+@CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "/**")
 //@CrossOrigin(origins = "http://127.0.0.1:5500")
 
