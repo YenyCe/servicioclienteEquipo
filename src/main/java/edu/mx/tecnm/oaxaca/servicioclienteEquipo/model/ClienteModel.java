@@ -26,6 +26,8 @@ public class ClienteModel {
     @Column //Todos los atributos son columnas
     @NotEmpty(message="El RFC es obligatorio")
     private String rfc;
+    
+    @NotEmpty(message="El nombre es obligatorio")
     private String nombre;
     private String apellidos;
     private String direccion;
