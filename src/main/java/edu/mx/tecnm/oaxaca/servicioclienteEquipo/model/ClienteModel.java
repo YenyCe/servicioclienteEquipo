@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 
 /**
@@ -23,6 +24,7 @@ public class ClienteModel {
 
     @Id
     @Column //Todos los atributos son columnas
+    @NotEmpty(message="El RFC es obligatorio")
     private String rfc;
     private String nombre;
     private String apellidos;
