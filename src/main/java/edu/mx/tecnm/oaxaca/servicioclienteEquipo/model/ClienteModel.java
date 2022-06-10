@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 
@@ -26,9 +27,13 @@ public class ClienteModel {
     @Column //Todos los atributos son columnas
     @NotEmpty(message="El RFC es obligatorio")
     private String rfc;
-    @NotEmpty(message="El nombre no puede estar vacio")
+    
+    @NotBlank(message="El nombre de usuario no puede estar vacío")   
     private String nombre;
+    
+    @NotBlank(message="El apellido de usuario no puede estar vacío") 
     private String apellidos;
+    
     private String direccion;
     private String correo_electronico;
     private String no_telefono;
@@ -36,18 +41,7 @@ public class ClienteModel {
     private int PIN;
     private String estatus;
 
-    public ClienteModel(@NotEmpty(message="El RFC es obligatorio")String rfc, @NotEmpty(message="El nombre no puede estar vacio")String nombre, String apellidos, String direccion, String correo_electronico, String no_telefono, @NotEmpty(message="El PIN no puede estar vacio")int PIN, String estatus) {
-        this.rfc = rfc;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.direccion = direccion;
-        this.correo_electronico = correo_electronico;
-        this.no_telefono = no_telefono;
-        this.PIN = PIN;
-        this.estatus = estatus;
-    }
-
-   
+    
 
     
     public String getRfc() {
