@@ -33,17 +33,22 @@ public class ClienteController {
     @PostMapping("/")
     public CustomResponse registroCliente(@RequestBody ClienteModel cliente) {
         CustomResponse customResponse = new CustomResponse();
-        clienteService.registrarCliente(cliente);
+        
+        if (cliente.getRfc().length() == 13) {
+            clienteService.registrarCliente(cliente);
+        } else {
+         customResponse.setMensaje("Su RFC es incorrecto");
+        }
         return customResponse;
     }
 
-     @GetMapping("/")
+    @GetMapping("/")
     public CustomResponse getClientess() {
         CustomResponse customResponse = new CustomResponse();
         customResponse.setData(clienteService.getClientes());
         return customResponse;
     }
-    
+
     @GetMapping("/{rfc}")
     public CustomResponse getClientes(@PathVariable String rfc) {
         CustomResponse customResponse = new CustomResponse();

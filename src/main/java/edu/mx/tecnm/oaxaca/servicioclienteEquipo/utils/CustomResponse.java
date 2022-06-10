@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.mx.tecnm.oaxaca.servicioclienteEquipo.utils;
-
 
 import java.util.LinkedList;
 
@@ -13,9 +7,11 @@ import java.util.LinkedList;
  * @author yeny
  */
 public class CustomResponse {
+
     private Integer httpCode;
     private Object data;
     public String mensaje;
+    private String httpCodeMessage;
 
     public CustomResponse() {
         this.httpCode = 200;

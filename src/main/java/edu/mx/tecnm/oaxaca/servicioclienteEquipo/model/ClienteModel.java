@@ -6,6 +6,11 @@
 package edu.mx.tecnm.oaxaca.servicioclienteEquipo.model;
 
 import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 
 /**
  *
@@ -18,7 +23,6 @@ public class ClienteModel {
     @Id
     @Column //Todos los atributos son columnas
     private String rfc;
-    private int id;
     private String nombre;
     private String apellidos;
     private String direccion;
@@ -42,15 +46,6 @@ public class ClienteModel {
     public void setRfc(String rfc) {
         this.rfc = rfc;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    
 
     public String getNombre() {
         return nombre;
