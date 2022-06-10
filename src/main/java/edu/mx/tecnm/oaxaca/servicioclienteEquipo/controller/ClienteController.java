@@ -32,11 +32,16 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/")
-    public CustomResponse registroCliente(@Valid @RequestBody ClienteModel cliente) {
+    public CustomResponse registroCliente(@RequestBody ClienteModel cliente) {
         CustomResponse customResponse = new CustomResponse();
-
+        if (cliente.getRfc().length() == 13) {
             clienteService.registrarCliente(cliente);
-       
+        } else if (cliente.getRfc().length() == 0) {
+            customResponse.setMensaje("Su RFC es obligatorio");
+        } else {
+            customResponse.setMensaje("Su RFC es incorrecto");
+        }
+
         return customResponse;
 
     }
