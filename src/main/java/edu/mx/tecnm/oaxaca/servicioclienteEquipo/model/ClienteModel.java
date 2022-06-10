@@ -26,15 +26,17 @@ public class ClienteModel {
     @Column //Todos los atributos son columnas
     @NotEmpty(message="El RFC es obligatorio")
     private String rfc;
+    @NotEmpty(message="El nombre no puede estar vacio")
     private String nombre;
     private String apellidos;
     private String direccion;
     private String correo_electronico;
     private String no_telefono;
+    @NotEmpty(message="El PIN no puede estar vacio")
     private int PIN;
     private String estatus;
 
-    public ClienteModel( @NotEmpty(message="El RFC es obligatorio") String rfc, String nombre, String apellidos, String direccion, String correo_electronico, String no_telefono, int PIN, String estatus) {
+    public ClienteModel(@NotEmpty(message="El RFC es obligatorio")String rfc, @NotEmpty(message="El nombre no puede estar vacio")String nombre, String apellidos, String direccion, String correo_electronico, String no_telefono, @NotEmpty(message="El PIN no puede estar vacio")int PIN, String estatus) {
         this.rfc = rfc;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -44,6 +46,8 @@ public class ClienteModel {
         this.PIN = PIN;
         this.estatus = estatus;
     }
+
+   
 
     
     public String getRfc() {
