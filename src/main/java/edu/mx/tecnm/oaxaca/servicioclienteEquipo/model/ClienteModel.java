@@ -28,7 +28,7 @@ public class ClienteModel {
     private String apellidos;
     private String direccion;
     private String correo_electronico;
-    private int no_telefono;
+    private String no_telefono;
     private int PIN;
     private String estatus;
 
@@ -36,11 +36,11 @@ public class ClienteModel {
         return rfc;
     }
 
-    public int getNo_telefono() {
+    public String getNo_telefono() {
         return no_telefono;
     }
 
-    public void setNo_telefono(int no_telefono) {
+    public void setNo_telefono(String no_telefono) {
         this.no_telefono = no_telefono;
     }
 
