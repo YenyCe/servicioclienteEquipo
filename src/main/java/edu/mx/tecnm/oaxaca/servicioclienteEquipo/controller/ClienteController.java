@@ -8,6 +8,7 @@ package edu.mx.tecnm.oaxaca.servicioclienteEquipo.controller;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.model.ClienteModel;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.service.ClienteService;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.utils.CustomResponse;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,16 +32,9 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/")
-    public CustomResponse registroCliente(@RequestBody ClienteModel cliente) {
+    public CustomResponse registroCliente(@Valid @RequestBody ClienteModel cliente) {
         CustomResponse customResponse = new CustomResponse();
-
-        if (cliente.getRfc().length() == 13) {
-            clienteService.registrarCliente(cliente);
-        } else if (cliente.getRfc().length() == 0) {
-            customResponse.setMensaje("Su RFC es obligatorio");
-        } else {
-            customResponse.setMensaje("Su RFC es incorrecto");
-        }
+        clienteService.registrarCliente(cliente);
         return customResponse;
 
     }

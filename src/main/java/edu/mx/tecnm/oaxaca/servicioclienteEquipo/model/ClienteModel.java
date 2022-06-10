@@ -34,6 +34,18 @@ public class ClienteModel {
     private int PIN;
     private String estatus;
 
+    public ClienteModel( @NotEmpty(message="El RFC es obligatorio") String rfc, String nombre, String apellidos, String direccion, String correo_electronico, String no_telefono, int PIN, String estatus) {
+        this.rfc = rfc;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.direccion = direccion;
+        this.correo_electronico = correo_electronico;
+        this.no_telefono = no_telefono;
+        this.PIN = PIN;
+        this.estatus = estatus;
+    }
+
+    
     public String getRfc() {
         return rfc;
     }
