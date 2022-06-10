@@ -33,7 +33,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/")
-    public CustomResponse registroCliente(@Validated @RequestBody ClienteModel cliente) {
+    public CustomResponse registroCliente(@RequestBody @Validated ClienteModel cliente) {
         CustomResponse customResponse = new CustomResponse();
         clienteService.registrarCliente(cliente);
         return customResponse;
