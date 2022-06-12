@@ -39,6 +39,10 @@ public class ClienteController {
             customResponse.setMensaje("El atributo RFC no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
+        } else if (cliente.getNombre().isEmpty()||cliente.getApellidos().isEmpty()) {
+            customResponse.setMensaje("El atributo no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
         } else if (cliente.getRfc().length() == 13) {
             clienteService.registrarCliente(cliente);
             customResponse.setHttpCode(HttpStatus.CREATED);
@@ -46,6 +50,8 @@ public class ClienteController {
             customResponse.setMensaje("Success");
         } else {
             customResponse.setMensaje("Su RFC es incorrecto");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
         }
 
         return customResponse;
