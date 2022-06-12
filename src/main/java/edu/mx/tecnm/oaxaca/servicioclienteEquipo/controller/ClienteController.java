@@ -68,6 +68,7 @@ public class ClienteController {
             
             customResponse.setData(clienteService.getClientes());
             customResponse.setHttpCode(HttpStatus.OK);
+             customResponse.setCode(200);
             customResponse.setMensaje("Todos los registros existentes:");
             
         }
