@@ -1,6 +1,7 @@
 package edu.mx.tecnm.oaxaca.servicioclienteEquipo.utils;
 
 import java.util.LinkedList;
+import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -8,22 +9,26 @@ import java.util.LinkedList;
  */
 public class CustomResponse {
 
-    private Integer httpCode;
+   // private Integer httpCode;
     private Object data;
-    public String mensaje;
+    public Object mensaje;
     private String httpCodeMessage;
+    public int code;
+    private HttpStatus httpCode;
 
-    public CustomResponse() {
-        this.httpCode = 200;
+      public CustomResponse() {
+    }
+    public CustomResponse(HttpStatus httpCode, int code) {
+        this.httpCode = httpCode;
         data = new LinkedList();
-        this.mensaje = "OK";
+        this.mensaje = new LinkedList();
     }
 
-    public Integer getHttpCode() {
+    public HttpStatus getHttpCode() {
         return httpCode;
     }
 
-    public void setHttpCode(Integer httpCode) {
+    public void setHttpCode(HttpStatus httpCode) {
         this.httpCode = httpCode;
     }
 
@@ -35,11 +40,19 @@ public class CustomResponse {
         this.data = data;
     }
 
-    public String getMensaje() {
+    public Object getMensaje() {
         return mensaje;
     }
 
-    public void setMensaje(String mensaje) {
+    public void setMensaje(Object mensaje) {
         this.mensaje = mensaje;
+    }
+    
+      public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

@@ -10,6 +10,7 @@ import edu.mx.tecnm.oaxaca.servicioclienteEquipo.service.ClienteService;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.utils.CustomResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,10 +35,15 @@ public class ClienteController {
     @PostMapping("/")
     public CustomResponse registroCliente(@RequestBody ClienteModel cliente) {
         CustomResponse customResponse = new CustomResponse();
-        if (cliente.getRfc().length() == 13) {
+        if (cliente.getRfc().isEmpty()) {
+            customResponse.setMensaje("El atributo RFC no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+        } else if (cliente.getRfc().length() == 13) {
             clienteService.registrarCliente(cliente);
-        } else if (cliente.getRfc().length() == 0) {
-            customResponse.setMensaje("Su RFC es obligatorio");
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setCode(201);
+            customResponse.setMensaje("Success");
         } else {
             customResponse.setMensaje("Su RFC es incorrecto");
         }
