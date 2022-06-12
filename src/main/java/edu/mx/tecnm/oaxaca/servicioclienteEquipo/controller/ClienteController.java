@@ -65,9 +65,10 @@ public class ClienteController {
             customResponse.setHttpCode(HttpStatus.NO_CONTENT);
             customResponse.setMensaje("No hay clientes registrados");
         } else {
-            customResponse.setMensaje("Todos los registros existentes:");
+            
             customResponse.setData(clienteService.getClientes());
             customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Todos los registros existentes:");
             
         }
         return customResponse;
