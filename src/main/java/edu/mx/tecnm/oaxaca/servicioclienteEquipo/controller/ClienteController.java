@@ -77,8 +77,18 @@ public class ClienteController {
 
     @GetMapping("/{rfc}")
     public CustomResponse getClientes(@PathVariable String rfc) {
-        CustomResponse customResponse = new CustomResponse();
-        customResponse.setData(clienteService.getCliente(rfc));
+        CustomResponse customResponse = new CustomResponse();                
+        if (clienteService.getCliente(rfc) == null) {
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
+        } else {
+            customResponse.setData(clienteService.getCliente(rfc));
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setCode(200);
+            customResponse.setMensaje("Exitoso, si hay cliente con este RFC:"+rfc);
+        }
+        
+        
         return customResponse;
     }
 
