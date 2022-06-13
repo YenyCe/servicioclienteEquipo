@@ -132,7 +132,7 @@ public class ClienteController {
             clienteService.deleteCliente(rfc);
             customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setCode(204);
-            customResponse.setMensaje(" delete Successful" + rfc);
+            customResponse.setMensaje(" delete Successful");
         }
         return customResponse;
     }
