@@ -110,7 +110,7 @@ public class ClienteController {
                 clienteService.updateCliente(cliente, rfc);
                 customResponse.setHttpCode(HttpStatus.CREATED);
                 customResponse.setCode(201);
-                customResponse.setMensaje("Success Actualizacion correcta");
+                customResponse.setMensaje("Successful update");
             } else {
                 customResponse.setMensaje("Su RFC es incorrecto");
                 customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -124,7 +124,16 @@ public class ClienteController {
     @DeleteMapping("/{rfc}")
     public CustomResponse deleteCliente(@PathVariable String rfc) {
         CustomResponse customResponse = new CustomResponse();
-        clienteService.deleteCliente(rfc);
+        
+        if (clienteService.getCliente(rfc) == null) {
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
+        } else {
+            clienteService.deleteCliente(rfc);
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setCode(204);
+            customResponse.setMensaje(" delete Successful" + rfc);
+        }
         return customResponse;
     }
 }
