@@ -98,24 +98,10 @@ public class ClienteController {
             customResponse.setHttpCode(HttpStatus.NOT_FOUND);
             customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
         } else {
-            if (cliente.getRfc().isEmpty()) {
-                customResponse.setMensaje("El atributo RFC no puede ir vacío");
-                customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-                customResponse.setCode(422);
-            } else if (cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty()) {
-                customResponse.setMensaje("El atributo no puede ir vacío");
-                customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-                customResponse.setCode(422);
-            } else if (cliente.getRfc().length() == 13) {
-                clienteService.updateCliente(cliente, rfc);
-                customResponse.setHttpCode(HttpStatus.CREATED);
-                customResponse.setCode(201);
-                customResponse.setMensaje("Successful update");
-            } else {
-                customResponse.setMensaje("Su RFC es incorrecto");
-                customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-                customResponse.setCode(422);
-            }
+            clienteService.updateCliente(cliente, rfc);
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setCode(201);
+            customResponse.setMensaje("Successful update");
         }
 
         return customResponse;
@@ -124,7 +110,7 @@ public class ClienteController {
     @DeleteMapping("/{rfc}")
     public CustomResponse deleteCliente(@PathVariable String rfc) {
         CustomResponse customResponse = new CustomResponse();
-        
+
         if (clienteService.getCliente(rfc) == null) {
             customResponse.setHttpCode(HttpStatus.NOT_FOUND);
             customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
