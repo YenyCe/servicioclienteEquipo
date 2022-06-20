@@ -89,8 +89,8 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            if (clienteService.getClientes().isEmpty()) {
-                responseData.setHttpCode(200);
+            if (clienteService.getClientes()==null) {
+                responseData.setHttpCode(422);
                 responseData.setMessage("No hay clientes registrados");
                 valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
                 
