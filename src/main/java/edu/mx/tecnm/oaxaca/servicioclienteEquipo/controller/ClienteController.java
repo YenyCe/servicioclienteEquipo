@@ -49,16 +49,16 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
-                responseData.setMessage("El atributo no puede ir vacío");
-                responseData.setHttpCode(422);
+                responseData.setMessage("Bad Request: Uno o más campos están vacíos");
+                responseData.setHttpCode(400);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (clienteService.getCliente(cliente.getRfc()) != null) {
-                responseData.setMessage("El RFC ya se encuentra registrado");
+                responseData.setMessage("Bad Request: El RFC ya se encuentra registrado");
                 responseData.setHttpCode(422);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (cliente.getRfc().length() == 13) {
                 clienteService.registrarCliente(cliente);
-                responseData.setMessage("Success");
+                responseData.setMessage("Success: El producto se ha creado correctamente");
                 responseData.setHttpCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
@@ -89,16 +89,15 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            if (!clienteService.getClientes().isEmpty()) {
+            if (clienteService.getClientes().isEmpty()) {
+                responseData.setHttpCode(422);
+                responseData.setMessage("No hay clientes registrados");
+                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
+            } else {
                 responseData.setData(clienteService.getClientes());
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
                 responseData.setHttpCode(200);
                 responseData.setMessage("Todos los registros existentes:");
-
-            } else {
-                responseData.setHttpCode(422);
-                responseData.setMessage("No hay clientes registrados");
-                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
             }
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
@@ -123,11 +122,11 @@ public class ClienteController {
             authentication.auth(request);
             if (clienteService.getCliente(rfc) == null) {
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
+                responseData.setMessage("Bad Request: No hay clientes con este rfc:= " + rfc);
                 responseData.setHttpCode(422);
             } else {
                 responseData.setData(clienteService.getCliente(rfc));
-                responseData.setMessage("Exitoso, si hay cliente con este RFC:" + rfc);
+                responseData.setMessage("Success: Si hay cliente con este RFC:" + rfc);
                 responseData.setHttpCode(200);
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
@@ -155,14 +154,14 @@ public class ClienteController {
             authentication.auth(request);
             if (clienteService.getCliente(rfc) == null) {
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
+                responseData.setMessage("Bad Request: No hay clientes con este rfc:= " + rfc);
             } else if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
-                responseData.setMessage("El atributo no puede ir vacío");
-                responseData.setHttpCode(422);
+                responseData.setMessage("Bad Request: El atributo no puede ir vacío");
+                responseData.setHttpCode(400);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else {
                 clienteService.updateCliente(cliente, rfc);
-                responseData.setMessage("Successful update");
+                responseData.setMessage("OK: Successful update");
                 responseData.setHttpCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             }
@@ -194,10 +193,10 @@ public class ClienteController {
             if (clienteService.getCliente(rfc) == null) {
                 responseData.setHttpCode(401);
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
+                responseData.setMessage("Not Found: No hay clientes con este rfc:= " + rfc);
             } else {
                 clienteService.deleteCliente(rfc);
-                responseData.setMessage("delete Successful");
+                responseData.setMessage("OK: Delete Successful");
                 responseData.setHttpCode(204);
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
