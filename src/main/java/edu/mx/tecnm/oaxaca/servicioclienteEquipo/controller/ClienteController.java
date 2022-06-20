@@ -127,6 +127,7 @@ public class ClienteController {
             if (clienteService.getCliente(rfc) == null) {
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
                 responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+                responseData.setCode(422);
             } else {
                 responseData.setData(clienteService.getCliente(rfc));
                 responseData.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
@@ -155,17 +156,21 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            //cargoUtil.procesarCancelacionMovimiento(folioMovimiento);
-            //valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).build();           
-            clienteService.updateCliente(cliente, rfc);
-            responseData.setMensaje("Successful update");
-            responseData.setCode(201);
-            valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            if (clienteService.getCliente(rfc) == null) {
+                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            } else if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
+                responseData.setMensaje("El atributo no puede ir vacío");
+                responseData.setCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            } else {
+                clienteService.updateCliente(cliente, rfc);
+                responseData.setMensaje("Successful update");
+                responseData.setCode(201);
+                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            }
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-            //responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
-            //responseData.setData(e);
-            //responseData.setHttpCode(401);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
