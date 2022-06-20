@@ -124,14 +124,17 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            responseData.setData(clienteService.getCliente(rfc));
-            responseData.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
-            responseData.setCode(200);
-            valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            if (clienteService.getCliente(rfc) == null) {
+                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            } else {
+                responseData.setData(clienteService.getCliente(rfc));
+                responseData.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
+                responseData.setCode(200);
+                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            }
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-            responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
-            responseData.setCode(401);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
