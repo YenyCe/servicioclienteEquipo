@@ -154,7 +154,6 @@ public class ClienteController {
             responseData.setMensaje("Successful update");
             responseData.setCode(201);
             valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
-           // valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             //responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
