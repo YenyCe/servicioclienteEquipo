@@ -56,16 +56,16 @@ public class ClienteController {
                 responseData.setMensaje("El atributo no puede ir vacío");
                 responseData.setCode(422);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            } else if (clienteService.getCliente(cliente.getRfc()) != null) {
+                responseData.setMensaje("El RFC ya se encuentra registrado");
+                responseData.setCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (cliente.getRfc().length() == 13) {
                 clienteService.registrarCliente(cliente);
                 responseData.setMensaje("Success");
                 responseData.setCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
-            } else if(clienteService.getCliente(cliente.getRfc()) != null){
-                responseData.setMensaje("El RFC ya se encuentra registrado");
-                responseData.setCode(422);
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
-            }else {
+            } else {
                 responseData.setMensaje("Su RFC es incorrecto");
                 responseData.setCode(422);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
