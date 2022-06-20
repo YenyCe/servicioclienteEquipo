@@ -58,7 +58,7 @@ public class ClienteController {
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (cliente.getRfc().length() == 13) {
                 clienteService.registrarCliente(cliente);
-                responseData.setMessage("Success: El producto se ha creado correctamente");
+                responseData.setMessage("Success: El Cliente se ha creado correctamente");
                 responseData.setHttpCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
