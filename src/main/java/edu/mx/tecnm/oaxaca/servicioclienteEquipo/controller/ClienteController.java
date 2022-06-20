@@ -195,6 +195,7 @@ public class ClienteController {
             authentication.auth(request);
 
             if (clienteService.getCliente(rfc) == null) {
+                responseData.setCode(401);
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
                 responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
             } else {
@@ -206,8 +207,6 @@ public class ClienteController {
 
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-            responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
-            responseData.setCode(401);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
