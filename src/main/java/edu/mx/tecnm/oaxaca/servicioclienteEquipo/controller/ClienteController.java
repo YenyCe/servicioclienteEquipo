@@ -44,7 +44,7 @@ public class ClienteController {
 
     @PostMapping("/")
     public ResponseEntity registroCliente(@RequestBody ClienteModel cliente, HttpServletRequest request) throws UnauthorizedException {
-        ResponseEntity<CustomResponse> valueResponse = null;
+       ResponseEntity<CustomResponse> valueResponse = null;
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
@@ -61,6 +61,8 @@ public class ClienteController {
                 responseData.setMessage("Success");
                 responseData.setHttpCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+                
+                
                 //ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
                 responseData.setMessage("Su RFC es incorrecto");
@@ -129,6 +131,7 @@ public class ClienteController {
                 responseData.setData(clienteService.getCliente(rfc));
                 responseData.setMessage("Exitoso, si hay cliente con este RFC:" + rfc);
                 responseData.setHttpCode(200);
+                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
                 ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
         } catch (EntityNotFoundException e) {
