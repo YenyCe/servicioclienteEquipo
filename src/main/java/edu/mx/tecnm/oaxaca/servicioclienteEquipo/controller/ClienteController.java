@@ -60,7 +60,8 @@ public class ClienteController {
                 clienteService.registrarCliente(cliente);
                 responseData.setMessage("Success");
                 responseData.setHttpCode(201);
-                ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+                //ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
                 responseData.setMessage("Su RFC es incorrecto");
                 responseData.setHttpCode(422);
