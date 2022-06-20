@@ -61,7 +61,11 @@ public class ClienteController {
                 responseData.setMensaje("Success");
                 responseData.setCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
-            } else {
+            } else if(clienteService.getCliente(cliente.getRfc()) != null){
+                responseData.setMensaje("El RFC ya se encuentra registrado");
+                responseData.setCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            }else {
                 responseData.setMensaje("Su RFC es incorrecto");
                 responseData.setCode(422);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
