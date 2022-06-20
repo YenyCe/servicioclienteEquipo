@@ -176,17 +176,19 @@ public class ClienteController {
 
     @DeleteMapping("/{rfc}")
     public ResponseEntity deleteCliente(@PathVariable String rfc, HttpServletRequest request) {
+
         ResponseEntity valueResponse = null;
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
             clienteService.deleteCliente(rfc);
-            valueResponse = ResponseEntity.status(HttpStatus.OK).build();
+            responseData.setMensaje("delete Successful");
             responseData.setCode(204);
-            responseData.setMensaje(" delete Successful");
+            valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            responseData.setCode(401);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
