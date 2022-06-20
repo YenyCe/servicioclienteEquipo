@@ -52,7 +52,7 @@ public class ClienteController {
             //responseData.setData(cliente);
             //responseData.setHttpCode(201);
             //valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
-            if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty()) {
+            if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() + "" == null) {
                 responseData.setMensaje("El atributo no puede ir vacío");
                 responseData.setCode(422);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
