@@ -14,21 +14,21 @@ public class CustomResponse {
     public Object mensaje;
     private String httpCodeMessage;
     public int code;
-    private HttpStatus httpCode;
+    private Integer httpCode;
 
       public CustomResponse() {
     }
-    public CustomResponse(HttpStatus httpCode, int code) {
+    public CustomResponse(Integer httpCode, int code) {
         this.httpCode = httpCode;
         data = new LinkedList();
         this.mensaje = new LinkedList();
     }
 
-    public HttpStatus getHttpCode() {
+    public Integer getHttpCode() {
         return httpCode;
     }
 
-    public void setHttpCode(HttpStatus httpCode) {
+    public void setHttpCode(Integer httpCode) {
         this.httpCode = httpCode;
     }
 

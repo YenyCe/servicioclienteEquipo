@@ -5,12 +5,20 @@
  */
 package edu.mx.tecnm.oaxaca.servicioclienteEquipo.controller;
 
+import edu.mx.tecnm.oaxaca.servicioclienteEquipo.authentication.Authentication;
+import edu.mx.tecnm.oaxaca.servicioclienteEquipo.exceptions.ExternalMicroserviceException;
+import edu.mx.tecnm.oaxaca.servicioclienteEquipo.exceptions.UnauthorizedException;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.model.ClienteModel;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.service.ClienteService;
 import edu.mx.tecnm.oaxaca.servicioclienteEquipo.utils.CustomResponse;
-import javax.validation.Valid;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +27,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/cliente")
@@ -32,94 +39,165 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    private Authentication authentication;
+
     @PostMapping("/")
-    public CustomResponse registroCliente(@RequestBody ClienteModel cliente) {
-        CustomResponse customResponse = new CustomResponse();
-        if (cliente.getRfc().isEmpty()) {
-            customResponse.setMensaje("El atributo RFC no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-        } else if (cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty()) {
-            customResponse.setMensaje("El atributo no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-        } else if (cliente.getRfc().length() == 13) {
-            clienteService.registrarCliente(cliente);
-            customResponse.setHttpCode(HttpStatus.CREATED);
-            customResponse.setCode(201);
-            customResponse.setMensaje("Success");
-        } else {
-            customResponse.setMensaje("Su RFC es incorrecto");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
+    public ResponseEntity registroCliente(@RequestBody ClienteModel cliente, HttpServletRequest request) throws UnauthorizedException {
+        ResponseEntity<CustomResponse> valueResponse = null;
+        CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
+            // ClienteModel cliente = cargoUtil.procesarCargoTarjeta(cargoParam);
+            //responseData.setData(cliente);
+            //responseData.setHttpCode(201);
+            //valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty()) {
+                responseData.setMensaje("El atributo no puede ir vacío");
+                responseData.setCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            } else if (cliente.getRfc().length() == 13) {
+                clienteService.registrarCliente(cliente);
+                responseData.setMensaje("Success");
+                responseData.setCode(201);
+                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            } else {
+                responseData.setMensaje("Su RFC es incorrecto");
+                responseData.setCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            }
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+            valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(responseData);
+        } catch (Exception ex) {
+            responseData.setHttpCode(500);
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return customResponse;
+        return valueResponse;
 
     }
 
     @GetMapping("/")
-    public CustomResponse getClientess() {
-        CustomResponse customResponse = new CustomResponse();
-        if (clienteService.getClientes().isEmpty()) {
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setMensaje("No hay clientes registrados");
-        } else {
+    public ResponseEntity getClientess(HttpServletRequest request) {
+        ResponseEntity valueResponse = null;
+        CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
+            if (clienteService.getClientes().isEmpty()) {
+                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                responseData.setMensaje("No hay clientes registrados");
+            } else {
 
-            customResponse.setData(clienteService.getClientes());
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(200);
-            customResponse.setMensaje("Todos los registros existentes:");
-
+                responseData.setData(clienteService.getClientes());
+                valueResponse = ResponseEntity.status(HttpStatus.OK).build();
+                responseData.setCode(200);
+                responseData.setMensaje("Todos los registros existentes:");
+            }
+        } catch (EntityNotFoundException e) {
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+        } catch (Exception ex) {
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return customResponse;
+        return valueResponse;
     }
 
     @GetMapping("/{rfc}")
-    public CustomResponse getClientes(@PathVariable String rfc) {
-        CustomResponse customResponse = new CustomResponse();
-        if (clienteService.getCliente(rfc) == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
-            customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
-        } else {
-            customResponse.setData(clienteService.getCliente(rfc));
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(200);
-            customResponse.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
+    public ResponseEntity getClientes(@PathVariable String rfc, HttpServletRequest request) {
+        ResponseEntity valueResponse = null;
+        CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
+            responseData.setData(clienteService.getCliente(rfc));
+            responseData.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
+            responseData.setCode(200);
+            valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        } catch (EntityNotFoundException e) {
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            responseData.setCode(401);
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+        } catch (Exception ex) {
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return customResponse;
+
+        return valueResponse;
     }
 
     @PutMapping("/{rfc}")
-    public CustomResponse updateCliente(@RequestBody ClienteModel cliente, @PathVariable String rfc) {
-        CustomResponse customResponse = new CustomResponse();
-
-        if (clienteService.getCliente(rfc) == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
-            customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
-        } else {
+    public ResponseEntity updateCliente(@RequestBody ClienteModel cliente, @PathVariable String rfc, HttpServletRequest request) {
+        ResponseEntity valueResponse = null;
+        CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
+            //cargoUtil.procesarCancelacionMovimiento(folioMovimiento);
+            //valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).build();           
             clienteService.updateCliente(cliente, rfc);
-            customResponse.setHttpCode(HttpStatus.CREATED);
-            customResponse.setCode(201);
-            customResponse.setMensaje("Successful update");
+            responseData.setMensaje("Successful update");
+            responseData.setCode(201);
+            valueResponse = ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (EntityNotFoundException e) {
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            //responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            //responseData.setData(e);
+            //responseData.setHttpCode(401);
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+        } catch (Exception ex) {
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return customResponse;
+        return valueResponse;
+
     }
 
     @DeleteMapping("/{rfc}")
-    public CustomResponse deleteCliente(@PathVariable String rfc) {
-        CustomResponse customResponse = new CustomResponse();
-
-        if (clienteService.getCliente(rfc) == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
-            customResponse.setMensaje("No hay clientes con este rfc:= " + rfc);
-        } else {
+    public ResponseEntity deleteCliente(@PathVariable String rfc, HttpServletRequest request) {
+        ResponseEntity valueResponse = null;
+        CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
             clienteService.deleteCliente(rfc);
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(204);
-            customResponse.setMensaje(" delete Successful");
+            valueResponse = ResponseEntity.status(HttpStatus.OK).build();
+            responseData.setCode(204);
+            responseData.setMensaje(" delete Successful");
+        } catch (EntityNotFoundException e) {
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+        } catch (Exception ex) {
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return customResponse;
+
+        return valueResponse;
     }
 }
