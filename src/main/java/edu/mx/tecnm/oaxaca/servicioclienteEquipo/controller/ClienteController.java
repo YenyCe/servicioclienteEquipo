@@ -90,17 +90,17 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getClientes().isEmpty()) {
-                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
                 responseData.setMensaje("No hay clientes registrados");
             } else {
 
                 responseData.setData(clienteService.getClientes());
-                valueResponse = ResponseEntity.status(HttpStatus.OK).build();
+                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
                 responseData.setCode(200);
                 responseData.setMensaje("Todos los registros existentes:");
             }
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
@@ -125,7 +125,7 @@ public class ClienteController {
             responseData.setCode(200);
             valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
             responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
             responseData.setCode(401);
         } catch (UnauthorizedException ex) {
@@ -155,7 +155,7 @@ public class ClienteController {
             responseData.setCode(201);
             valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
             //responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
             //responseData.setData(e);
             //responseData.setHttpCode(401);
