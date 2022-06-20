@@ -89,16 +89,16 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            if (clienteService.getClientes().isEmpty()) {
-                responseData.setHttpCode(422);
-                responseData.setMessage("No hay clientes registrados");
-                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
-                
-            } else {
+            if (!clienteService.getClientes().isEmpty()) {
                 responseData.setData(clienteService.getClientes());
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
                 responseData.setHttpCode(200);
                 responseData.setMessage("Todos los registros existentes:");
+
+            } else {
+                responseData.setHttpCode(422);
+                responseData.setMessage("No hay clientes registrados");
+                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
             }
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
