@@ -198,7 +198,7 @@ public class ClienteController {
             responseData.setCode(204);
             valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
             responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
             responseData.setCode(401);
         } catch (UnauthorizedException ex) {
