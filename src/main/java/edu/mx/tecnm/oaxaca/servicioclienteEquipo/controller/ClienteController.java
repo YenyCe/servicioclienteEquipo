@@ -90,12 +90,11 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getClientes().isEmpty()) {
-                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
                 responseData.setHttpCode(200);
                 responseData.setMessage("No hay clientes registrados");
- 
+                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
+                
             } else {
-
                 responseData.setData(clienteService.getClientes());
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
                 responseData.setHttpCode(200);
