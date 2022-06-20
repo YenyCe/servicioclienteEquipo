@@ -159,12 +159,17 @@ public class ClienteController {
                 responseData.setMessage("Bad Request: El atributo no puede ir vacío");
                 responseData.setHttpCode(400);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
-            } else {
+            } else if (cliente.getRfc().length() == 13) {
                 clienteService.updateCliente(cliente, rfc);
                 responseData.setMessage("OK: Successful update");
                 responseData.setHttpCode(201);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            } else {
+                responseData.setMessage("Su RFC es incorrecto");
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+                responseData.setHttpCode(422);
             }
+
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
