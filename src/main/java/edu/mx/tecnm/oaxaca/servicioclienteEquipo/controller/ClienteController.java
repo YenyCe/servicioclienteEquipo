@@ -48,39 +48,35 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            // ClienteModel cliente = cargoUtil.procesarCargoTarjeta(cargoParam);
-            //responseData.setData(cliente);
-            //responseData.setHttpCode(201);
-            //valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
-                responseData.setMensaje("El atributo no puede ir vacío");
-                responseData.setCode(422);
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+                responseData.setMessage("El atributo no puede ir vacío");
+                responseData.setHttpCode(422);
+                ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (clienteService.getCliente(cliente.getRfc()) != null) {
-                responseData.setMensaje("El RFC ya se encuentra registrado");
-                responseData.setCode(422);
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+                responseData.setMessage("El RFC ya se encuentra registrado");
+                responseData.setHttpCode(422);
+                ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else if (cliente.getRfc().length() == 13) {
                 clienteService.registrarCliente(cliente);
-                responseData.setMensaje("Success");
-                responseData.setCode(201);
-                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+                responseData.setMessage("Success");
+                responseData.setHttpCode(201);
+                ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
-                responseData.setMensaje("Su RFC es incorrecto");
-                responseData.setCode(422);
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+                responseData.setMessage("Su RFC es incorrecto");
+                responseData.setHttpCode(422);
+                ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             }
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
         } catch (ExternalMicroserviceException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(503);
-            valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(responseData);
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(responseData);
         } catch (Exception ex) {
             responseData.setHttpCode(500);
-            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         return valueResponse;
@@ -94,26 +90,26 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getClientes().isEmpty()) {
-                valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
-                responseData.setMensaje("No hay clientes registrados");
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
+                responseData.setMessage("No hay clientes registrados");
             } else {
 
                 responseData.setData(clienteService.getClientes());
-                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
-                responseData.setCode(200);
-                responseData.setMensaje("Todos los registros existentes:");
+                ResponseEntity.status(HttpStatus.OK).body(responseData);
+                responseData.setHttpCode(200);
+                responseData.setMessage("Todos los registros existentes:");
             }
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
         } catch (ExternalMicroserviceException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(503);
         } catch (Exception ex) {
-            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return valueResponse;
     }
@@ -125,26 +121,26 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getCliente(rfc) == null) {
-                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
-                responseData.setCode(422);
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
+                responseData.setHttpCode(422);
             } else {
                 responseData.setData(clienteService.getCliente(rfc));
-                responseData.setMensaje("Exitoso, si hay cliente con este RFC:" + rfc);
-                responseData.setCode(200);
-                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+                responseData.setMessage("Exitoso, si hay cliente con este RFC:" + rfc);
+                responseData.setHttpCode(200);
+                ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
         } catch (ExternalMicroserviceException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(503);
         } catch (Exception ex) {
-            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         return valueResponse;
@@ -157,29 +153,29 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getCliente(rfc) == null) {
-                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
             } else if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
-                responseData.setMensaje("El atributo no puede ir vacío");
-                responseData.setCode(422);
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+                responseData.setMessage("El atributo no puede ir vacío");
+                responseData.setHttpCode(422);
+                ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else {
                 clienteService.updateCliente(cliente, rfc);
-                responseData.setMensaje("Successful update");
-                responseData.setCode(201);
-                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+                responseData.setMessage("Successful update");
+                responseData.setHttpCode(201);
+                ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             }
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
         } catch (ExternalMicroserviceException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(503);
         } catch (Exception ex) {
-            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         return valueResponse;
@@ -195,27 +191,27 @@ public class ClienteController {
             authentication.auth(request);
 
             if (clienteService.getCliente(rfc) == null) {
-                responseData.setCode(401);
-                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
-                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+                responseData.setHttpCode(401);
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMessage("No hay clientes con este rfc:= " + rfc);
             } else {
                 clienteService.deleteCliente(rfc);
-                responseData.setMensaje("delete Successful");
-                responseData.setCode(204);
-                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+                responseData.setMessage("delete Successful");
+                responseData.setHttpCode(204);
+                ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
 
         } catch (EntityNotFoundException e) {
-            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
         } catch (ExternalMicroserviceException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(503);
         } catch (Exception ex) {
-            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         return valueResponse;

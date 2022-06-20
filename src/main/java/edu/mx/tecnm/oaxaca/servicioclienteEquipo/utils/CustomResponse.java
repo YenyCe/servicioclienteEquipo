@@ -9,19 +9,15 @@ import org.springframework.http.HttpStatus;
  */
 public class CustomResponse {
 
-   // private Integer httpCode;
-    private Object data;
-    public Object mensaje;
-    private String httpCodeMessage;
-    public int code;
+    // private Integer httpCode;
     private Integer httpCode;
+    private Object data;
+    private String message;
 
-      public CustomResponse() {
-    }
-    public CustomResponse(Integer httpCode, int code) {
-        this.httpCode = httpCode;
-        data = new LinkedList();
-        this.mensaje = new LinkedList();
+    public CustomResponse() {
+        this.httpCode = 200;
+        this.data = new LinkedList();
+        this.message = "Ok";
     }
 
     public Integer getHttpCode() {
@@ -40,19 +36,12 @@ public class CustomResponse {
         this.data = data;
     }
 
-    public Object getMensaje() {
-        return mensaje;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMensaje(Object mensaje) {
-        this.mensaje = mensaje;
-    }
-    
-      public int getCode() {
-        return code;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
 }
