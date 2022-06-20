@@ -193,10 +193,17 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            clienteService.deleteCliente(rfc);
-            responseData.setMensaje("delete Successful");
-            responseData.setCode(204);
-            valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+
+            if (clienteService.getCliente(rfc) == null) {
+                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
+            } else {
+                clienteService.deleteCliente(rfc);
+                responseData.setMensaje("delete Successful");
+                responseData.setCode(204);
+                valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            }
+
         } catch (EntityNotFoundException e) {
             valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
             responseData.setMensaje("No hay clientes con este rfc:= " + rfc);
