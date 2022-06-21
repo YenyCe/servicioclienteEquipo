@@ -160,9 +160,10 @@ public class ClienteController {
                 responseData.setHttpCode(400);
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else {
-                responseData.setMessage("Su RFC es incorrecto");
-                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
-                responseData.setHttpCode(422);
+                clienteService.updateCliente(cliente, rfc);
+                responseData.setMessage("OK: Successful update");
+                responseData.setHttpCode(201);
+                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             }
 
         } catch (EntityNotFoundException e) {
