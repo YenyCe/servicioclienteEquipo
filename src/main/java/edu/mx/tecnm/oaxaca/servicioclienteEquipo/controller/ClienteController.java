@@ -59,7 +59,7 @@ public class ClienteController {
             } else if (cliente.getRfc().length() == 13) {
                 clienteService.registrarCliente(cliente);
                 responseData.setMessage("Success: El Cliente se ha creado correctamente");
-                responseData.setHttpCode(201);
+                responseData.setHttpCode(200);
                 valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
             } else {
                 responseData.setMessage("Su RFC es incorrecto");
@@ -90,7 +90,7 @@ public class ClienteController {
         try {
             authentication.auth(request);
             if (clienteService.getClientes().isEmpty()) {
-                responseData.setHttpCode(422);
+                responseData.setHttpCode(404);
                 responseData.setMessage("No hay clientes registrados");
                 valueResponse = ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
             } else {
@@ -123,7 +123,7 @@ public class ClienteController {
             if (clienteService.getCliente(rfc) == null) {
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
                 responseData.setMessage("Bad Request: No hay clientes con este rfc:= " + rfc);
-                responseData.setHttpCode(422);
+                responseData.setHttpCode(404);
             } else {
                 responseData.setData(clienteService.getCliente(rfc));
                 responseData.setMessage("Success: Si hay cliente con este RFC:" + rfc);
@@ -188,13 +188,13 @@ public class ClienteController {
             authentication.auth(request);
 
             if (clienteService.getCliente(rfc) == null) {
-                responseData.setHttpCode(401);
                 valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
                 responseData.setMessage("Not Found: No hay clientes con este rfc:= " + rfc);
+                responseData.setHttpCode(404);
             } else {
                 clienteService.deleteCliente(rfc);
                 responseData.setMessage("OK: Delete Successful");
-                responseData.setHttpCode(204);
+                responseData.setHttpCode(200);
                 valueResponse = ResponseEntity.status(HttpStatus.OK).body(responseData);
             }
 
