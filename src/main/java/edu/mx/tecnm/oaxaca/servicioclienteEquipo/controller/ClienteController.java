@@ -152,11 +152,13 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            if (cliente.getRfc().length() == 13) {
-                clienteService.updateCliente(cliente, rfc);
-                responseData.setMessage("OK: Successful update");
-                responseData.setHttpCode(201);
-                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            if (clienteService.getCliente(rfc) == null) {
+                valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+                responseData.setMessage("Bad Request: No hay clientes con este rfc:= " + rfc);
+            } else if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
+                responseData.setMessage("Bad Request: El atributo no puede ir vacío");
+                responseData.setHttpCode(400);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
             } else {
                 responseData.setMessage("Su RFC es incorrecto");
                 valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
