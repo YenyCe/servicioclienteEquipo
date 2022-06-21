@@ -48,11 +48,24 @@ public class ClienteController {
         CustomResponse responseData = new CustomResponse();
         try {
             authentication.auth(request);
-            clienteService.registrarCliente(cliente);
-            responseData.setMessage("Success: El Cliente se ha creado correctamente");
-            responseData.setHttpCode(201);
-            valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
-
+            if (cliente.getRfc().isEmpty() || cliente.getNombre().isEmpty() || cliente.getApellidos().isEmpty() || cliente.getDireccion().isEmpty() || cliente.getCorreo_electronico().isEmpty() || cliente.getNo_telefono().isEmpty() || cliente.getEstatus().isEmpty() || cliente.getPIN() == 0.0d) {
+                responseData.setMessage("Bad Request: Uno o más campos están vacíos");
+                responseData.setHttpCode(400);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            } else if (clienteService.getCliente(cliente.getRfc()) != null) {
+                responseData.setMessage("Bad Request: El RFC ya se encuentra registrado");
+                responseData.setHttpCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            } else if (cliente.getRfc().length() == 13) {
+                clienteService.registrarCliente(cliente);
+                responseData.setMessage("Success: El Cliente se ha creado correctamente");
+                responseData.setHttpCode(201);
+                valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+            } else {
+                responseData.setMessage("Su RFC es incorrecto");
+                responseData.setHttpCode(422);
+                valueResponse = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(responseData);
+            }
         } catch (UnauthorizedException ex) {
             responseData.setData(ex.toJSON());
             responseData.setHttpCode(401);
@@ -137,13 +150,25 @@ public class ClienteController {
     public ResponseEntity updateCliente(@RequestBody ClienteModel cliente, @PathVariable String rfc, HttpServletRequest request) {
         ResponseEntity valueResponse = null;
         CustomResponse responseData = new CustomResponse();
+        try {
+            authentication.auth(request);
+            clienteService.updateCliente(cliente, rfc);
+            responseData.setMessage("OK: Successful update");
+            responseData.setHttpCode(201);
+            valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
 
-        authentication.auth(request);
-
-        clienteService.updateCliente(cliente, rfc);
-        responseData.setMessage("OK: Successful update");
-        responseData.setHttpCode(201);
-        valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+        } catch (EntityNotFoundException e) {
+            valueResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+        } catch (UnauthorizedException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(401);
+            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
+        } catch (ExternalMicroserviceException ex) {
+            responseData.setData(ex.toJSON());
+            responseData.setHttpCode(503);
+        } catch (Exception ex) {
+            valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
         return valueResponse;
 
